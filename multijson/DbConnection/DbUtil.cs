@@ -13,7 +13,7 @@ namespace multijson.DbConnection
 
         public DataSet GetDataSet(string path, string[] segments, string body, string method)
         {
-            string sqlCommand = "dbo.Web_MultiJSON ";
+            string sqlCommand = ConfigurationManager.AppSettings.Get("StoredProcedureName");
             string connectionString = ConfigurationManager.ConnectionStrings["MultijsonConnectionString"].ConnectionString;
 
             using (System.Data.SqlClient.SqlConnection conn = new System.Data.SqlClient.SqlConnection(connectionString))
