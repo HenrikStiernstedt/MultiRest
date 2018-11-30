@@ -37,7 +37,7 @@ namespace multijson.Models
             }
             
             DbUtil dbUtil = new DbUtil();
-            DataSet ds = dbUtil.GetDataSet(path, segments, "", request.Method.ToString());
+            DataSet ds = dbUtil.GetDataSet(path, segments, "", request.Method.ToString(), identity.Name);
 
             string responsebody = "";
             int statusCode = 200;
