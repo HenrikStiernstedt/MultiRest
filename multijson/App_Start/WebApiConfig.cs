@@ -11,7 +11,7 @@ namespace multijson
     {
         public static void Register(HttpConfiguration config)
         {
-            config.MapHttpAttributeRoutes(); // Minns ej om denna är nödvändig eller ej.
+            //config.MapHttpAttributeRoutes(); // Minns ej om denna är nödvändig eller ej. Verkar gå bra utan.
 
             string routeTemplate = ConfigurationManager.AppSettings.Get("routeTemplate") ?? "api/{*request}";
 
