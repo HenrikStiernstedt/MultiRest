@@ -15,6 +15,19 @@ namespace multijson.Models
 {
     public class DefaultHttpHandler : HttpMessageHandler
     {
+        private string name;
+        private string connectionStringName;
+        private string storedProcedureName;
+
+        public DefaultHttpHandler(string name, string connectionStringName, string storedProcedureName)
+        {
+            this.name = name;
+            this.connectionStringName = connectionStringName;
+            this.storedProcedureName = storedProcedureName;
+        }
+
+        //public static DefaultHttpHandler
+
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // Create the response.
@@ -28,7 +41,7 @@ namespace multijson.Models
             // Kan man IP-filtrera här?
 
             string path = request.RequestUri.LocalPath;
-
+            /*
             for (int i=0, j=0;i< request.RequestUri.Segments.Length; i++)
             {
                 string s = request.RequestUri.Segments[i];
@@ -37,20 +50,10 @@ namespace multijson.Models
                     segments[j++] = s.Replace("/", "");
                 }
             }
-            var route =  request.GetRouteData().Route; 
-            var routingSetting = RoutingGroups.GetRoutingGroups();
-            var requestContext = request.GetRequestContext();
-
-
-            foreach (RoutingGroupElement rg in routingSetting)
-            {
-                
-            }
-
-            
+            */
 
             DbUtil dbUtil = new DbUtil();
-            DataSet ds = dbUtil.GetDataSet(path, segments, "", request.Method.ToString(), identity.Name);
+            DataSet ds = dbUtil.GetDataSet(path, "", request.Method.ToString(), identity.Name, connectionStringName, storedProcedureName);
 
             string responsebody = "";
             int statusCode = 200;
@@ -83,6 +86,8 @@ namespace multijson.Models
                     );
                 }
             }
+
+            response.Headers.Add("X-HandledBy", name);
 
 
             // Note: TaskCompletionSource creates a task that does not contain a delegate.

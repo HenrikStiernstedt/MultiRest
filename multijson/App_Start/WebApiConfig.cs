@@ -1,8 +1,6 @@
-﻿using multijson.Models;
-using System;
-using System.Collections.Generic;
+﻿using multijson.Configuration;
+using multijson.Models;
 using System.Configuration;
-using System.Linq;
 using System.Web.Http;
 
 namespace multijson
@@ -13,15 +11,26 @@ namespace multijson
         {
             //config.MapHttpAttributeRoutes(); // Minns ej om denna är nödvändig eller ej. Verkar gå bra utan.
 
-            string routeTemplate = ConfigurationManager.AppSettings.Get("routeTemplate") ?? "api/{*request}";
+            //string routeTemplate = ConfigurationManager.AppSettings.Get("routeTemplate") ?? "api/{*request}";
 
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: routeTemplate,
-                constraints: null,
-                defaults: null,
-                handler: new DefaultHttpHandler()
-            );
+            var routingSetting = RoutingGroups.GetRoutingGroups();
+
+            foreach (RoutingGroupElement rge in routingSetting)
+            {
+                if (rge.IsActive)
+                {
+                    config.Routes.MapHttpRoute(
+                        name: rge.Name,
+                        routeTemplate: rge.RouteTemplate,
+                        constraints: null,
+                        defaults: null,
+                        handler: new DefaultHttpHandler(rge.Name, rge.ConnectionStringName, rge.StoredProcedureName)
+                    );
+                }
+            }
+
+
+
         }
     }
 }

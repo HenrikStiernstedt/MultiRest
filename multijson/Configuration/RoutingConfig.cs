@@ -58,7 +58,7 @@ namespace multijson.Configuration
         }
 
         [ConfigurationProperty("connectionStringName", DefaultValue = "", IsKey = false, IsRequired = true)]
-        public string Servername
+        public string ConnectionStringName
         {
             get { return (string)base["connectionStringName"]; }
             set { base["connectionStringName"] = value; }

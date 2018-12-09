@@ -11,10 +11,10 @@ namespace multijson.DbConnection
     public class DbUtil
     {
 
-        public DataSet GetDataSet(string path, string[] segments, string body, string method, string userName)
+        public DataSet GetDataSet(string path, string body, string method, string userName, string connectionStringName, string storedProcedureName)
         {
-            string sqlCommand = ConfigurationManager.AppSettings.Get("StoredProcedureName");
-            string connectionString = ConfigurationManager.ConnectionStrings["MultijsonConnectionString"].ConnectionString;
+            string sqlCommand = storedProcedureName;
+            string connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
 
             using (System.Data.SqlClient.SqlConnection conn = new System.Data.SqlClient.SqlConnection(connectionString))
             {
@@ -32,8 +32,6 @@ namespace multijson.DbConnection
                     cmd.Parameters.AddWithValue("@Segment2", (segments.Length > 1 ? segments[1] : null));
                     cmd.Parameters.AddWithValue("@Segment3", (segments.Length > 2 ? segments[2] : null));
                     */
-
-                    
 
                     conn.Open();
 
