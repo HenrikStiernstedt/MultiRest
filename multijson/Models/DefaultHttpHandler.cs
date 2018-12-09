@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using multijson.DbConnection;
+using multijson.Configuration;
+using System.Web.Http;
 
 namespace multijson.Models
 {
@@ -35,7 +37,18 @@ namespace multijson.Models
                     segments[j++] = s.Replace("/", "");
                 }
             }
+            var route =  request.GetRouteData().Route; 
+            var routingSetting = RoutingGroups.GetRoutingGroups();
+            var requestContext = request.GetRequestContext();
+
+
+            foreach (RoutingGroupElement rg in routingSetting)
+            {
+                
+            }
+
             
+
             DbUtil dbUtil = new DbUtil();
             DataSet ds = dbUtil.GetDataSet(path, segments, "", request.Method.ToString(), identity.Name);
 
