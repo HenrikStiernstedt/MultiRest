@@ -65,9 +65,6 @@ namespace multijson.Models
                 statusCode = (int) (dr["statusCode"] != DBNull.Value ? dr["statusCode"] : 404);
             }
 
-
-            // Use statusCode
-
             var response = new HttpResponseMessage((HttpStatusCode)statusCode)
             {
                 Content = new StringContent(responsebody)
@@ -78,15 +75,17 @@ namespace multijson.Models
 
             if (ds.Tables.Count > 1 && ds.Tables[1].Rows.Count > 0)
             {
-                foreach (DataRow dr in ds.Tables[1].Rows)
-                { 
+                DataRow row = ds.Tables[1].Rows[0];
+                foreach (DataColumn dc in ds.Tables[1].Columns)
+                {
                     response.Headers.Add(
-                        (string)(dr["HeaderName"] != DBNull.Value ? dr["HeaderName"] : ""),
-                        (string)(dr["HeaderValue"] != DBNull.Value ? dr["HeaderValue"] : "")
+                        dc.ColumnName,
+                        (string)(row[dc.ColumnName])
                     );
                 }
             }
 
+            // DEBUG: Notera vilken "handler" som användes.
             response.Headers.Add("X-HandledBy", name);
 
 
