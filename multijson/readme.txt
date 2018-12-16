@@ -26,13 +26,16 @@ Features:
     (Authentieringen ställs in i IIS.)
 * Stöd för flera olika registrerade prockar, som reagerar på olika
         path-matchningar.
-
+* Stöd för att skicka in headers som tabellvärd parameter till registrerad procedure.
+	* Kräver att en Tabellvärd variabel på följande format finns i databasen: 
+		* CREATE TYPE Util.KeyValuePair AS TABLE ( TextKey nvarchar(MAX) NOT NULL, TextValue nvarchar(MAX) NULL )
+	* Kräver att inställningen doUseTableValuedParameters="true" är satt i konfigurationsfilen
 
 TODO:
 =============================
 Att utveckla:
 -------------
-* Stöd för att skicka in headers som temptabell till registrerad procedure.
+* Stöd för att skcika in query-parametrar som temptabell till registrerad procedure.
 * Fallback-Handler som kan ge hjälp till utvecklare i testmiljöer.
 * Validering som ger begiprliga fel istället för exceptions.
 * Referensimplementation/dokumentation
@@ -40,7 +43,11 @@ Att utveckla:
   * Lägga till {parametrar} till routeTemplate, som skickas in som parametrar till procken.
   * Lägga till constraints till Http-routen.
   * Lägga till defaults till Http-routen.
-
+* Hantera olika typer av content (Ursprunglig tanke var att bara ta emot text.)
+  * Text content
+  * binary content
+  * Form data content
+  
 Att testa och verifiera:
 -----------------------
 * Säkerställ att IP-filterfunktionen inne i IIS kan användas.

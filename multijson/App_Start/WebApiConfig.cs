@@ -24,13 +24,10 @@ namespace multijson
                         routeTemplate: rge.RouteTemplate,
                         constraints: null,
                         defaults: null,
-                        handler: new DefaultHttpHandler(rge.Name, rge.ConnectionStringName, rge.StoredProcedureName)
+                        handler: new DefaultHttpHandler(rge)
                     );
                 }
             }
-
-
-
         }
     }
 }

@@ -1,41 +1,57 @@
-﻿using System;
+﻿using multijson.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
+using static System.Collections.Generic.Dictionary<string, string>;
 
 namespace multijson.DbConnection
 {
     public class DbUtil
     {
 
-        public DataSet GetDataSet(string path, string body, string method, string userName, string connectionStringName, string storedProcedureName)
+        public DataSet GetDataSet(RoutingGroupElement config, HttpRequestMessage request, string userName)
         {
-            string sqlCommand = storedProcedureName;
-            string connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
+            string sqlCommand = config.StoredProcedureName;
+            string connectionString = ConfigurationManager.ConnectionStrings[config.ConnectionStringName].ConnectionString;
 
-            using (System.Data.SqlClient.SqlConnection conn = new System.Data.SqlClient.SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                using (System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand())
+                using (SqlCommand cmd = new SqlCommand())
                 {
                     cmd.CommandText = sqlCommand;
                     cmd.Connection = conn;
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Path", path);
-                    cmd.Parameters.AddWithValue("@body", body);
-                    cmd.Parameters.AddWithValue("@Method", method);
+                    cmd.Parameters.AddWithValue("Path", request.RequestUri.LocalPath);
+                    cmd.Parameters.AddWithValue("body", "");
+                    cmd.Parameters.AddWithValue("Method", request.Method.Method.ToString());
                     cmd.Parameters.AddWithValue("UserName", userName);
-                    /*
-                    cmd.Parameters.AddWithValue("@Segment1", (segments.Length > 0 ? segments[0] : null));
-                    cmd.Parameters.AddWithValue("@Segment2", (segments.Length > 1 ? segments[1] : null));
-                    cmd.Parameters.AddWithValue("@Segment3", (segments.Length > 2 ? segments[2] : null));
-                    */
+                    cmd.Parameters.AddWithValue("IsDebug", config.IsDebug);
 
+                    if(config.DoUseTableValuedParameters)
+                    {
+                        DataTable HeaderParameter = new DataTable();
+                        HeaderParameter.Columns.Add("KeyText", typeof(string));
+                        HeaderParameter.Columns.Add("ValueText", typeof(string));
+
+                        Dictionary<string, string> headers = request.Headers.ToDictionary(a => a.Key.ToString(), a => string.Join(";", a.Value));
+                        Enumerator enumerator = headers.GetEnumerator();
+                        while(enumerator.MoveNext())
+                        {
+                            DataRow dr = HeaderParameter.NewRow();
+                            dr["KeyText"] = enumerator.Current.Key;
+                            dr["ValueText"] = enumerator.Current.Value;
+                            HeaderParameter.Rows.Add(dr);
+                        }
+                        cmd.Parameters.AddWithValue("Headers", HeaderParameter);
+                    }
+                    
                     conn.Open();
-
-                    System.Data.SqlClient.SqlDataAdapter adapter = new System.Data.SqlClient.SqlDataAdapter(cmd);
+                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
 
                     DataSet ds = new DataSet();
                     adapter.Fill(ds);

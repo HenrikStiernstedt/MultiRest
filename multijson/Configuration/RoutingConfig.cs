@@ -71,6 +71,19 @@ namespace multijson.Configuration
             set { base["isActive"] = value; }
         }
 
+        [ConfigurationProperty("isDebug", DefaultValue = "false", IsKey = false, IsRequired = false)]
+        public bool IsDebug
+        {
+            get { return (bool)base["isDebug"]; }
+            set { base["isDebug"] = value; }
+        }
+
+        [ConfigurationProperty("doUseTableValuedParameters", DefaultValue = "false", IsKey = false, IsRequired = false)]
+        public bool DoUseTableValuedParameters
+        {
+            get { return (bool)base["doUseTableValuedParameters"]; }
+            set { base["doUseTableValuedParameters"] = value; }
+        }
         [ConfigurationProperty("routeTemplate", DefaultValue = "{*request}", IsKey = false, IsRequired = false)]
         public string RouteTemplate
         {
